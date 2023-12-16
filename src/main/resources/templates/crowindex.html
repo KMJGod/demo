@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>크롤링 메인 페이지</title>
+</head>
+<body>
+    <div class="layout">
+        <table>
+            <thead>
+                <tr>
+                    <th>번호</th>
+                    <th>제목</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="top10_up : ${list}">
+                    <td th:text="${top10_up.id}">1</td>
+                    <td th:text="${top10_up.n_date}">1</td>
+                    <td th:text="${top10_up.company}">1</td>
+                    <td th:text="${top10_up.price}">1</td>
+                    <td th:text="${top10_up.change}">1</td>
+                    <td th:text="${top10_up.change_price}">0</td>
+                    <td th:text="${top10_up.percent}">1</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</body>
+</html>
