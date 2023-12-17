@@ -3,28 +3,206 @@
 <head>
     <meta charset="UTF-8">
     <title>크롤링 메인 페이지</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        header {
+            background-color: #333;
+            color: #fff;
+            padding: 10px;
+            text-align: left;
+            overflow: hidden;
+        }
+
+        .logo {
+            float: left;
+            margin-right: 20px;
+            height: 40px;
+            line-height: 40px;
+        }
+
+        nav {
+            float: right;
+            line-height: 40px;
+        }
+
+        nav a {
+            color: #fff;
+            text-decoration: none;
+            margin-right: 20px;
+        }
+
+        .layout {
+            margin: 20px;
+            display: flex;
+            justify-content: space-between;
+            flex-direction: column;
+        }
+
+        .table-header {
+            text-align: center;
+            font-weight: bold;
+            font-size: 1.5em;
+            margin-bottom: 10px;
+        }
+
+        table {
+            width: 50%;
+            border-collapse: collapse;
+            margin: 0 auto;
+        }
+
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #f2f2f2;
+        }
+
+        .date-column {
+            text-align: left; /* 왼쪽 정렬 */
+        }
+
+        .percent-column {
+            text-align: right; /* 오른쪽 정렬 */
+        }
+
+        tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .page-btns {
+            display: flex;
+            justify-content: center;
+            margin-top: 10px;
+        }
+
+        .page-btn {
+            cursor: pointer;
+            margin-right: 5px;
+            padding: 5px 10px;
+            background-color: #eee;
+        }
+
+        .page-btn.active {
+            background-color: #ddd;
+        }
+
+        footer {
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+            background-color: #333;
+            color: #fff;
+            text-align: center;
+            padding: 10px;
+        }
+    </style>
 </head>
 <body>
-    <div class="layout">
-        <table>
-            <thead>
-                <tr>
-                    <th>번호</th>
-                    <th>제목</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr th:each="top10_up : ${list}">
-                    <td th:text="${top10_up.id}">1</td>
-                    <td th:text="${top10_up.n_date}">1</td>
-                    <td th:text="${top10_up.company}">1</td>
-                    <td th:text="${top10_up.price}">1</td>
-                    <td th:text="${top10_up.change}">1</td>
-                    <td th:text="${top10_up.change_price}">0</td>
-                    <td th:text="${top10_up.percent}">1</td>
-                </tr>
-            </tbody>
-        </table>
-    </div>
+<header>
+    <div class="logo">KIMGod</div>
+    <nav>
+        <a href="#">Home</a>
+        <a href="#">About</a>
+        <a href="#">Contact</a>
+    </nav>
+</header>
+
+<div class="layout">
+    <div class="table-header">상승폭 TOP 종목</div>
+    <table id="myTable">
+        <thead>
+        <tr>
+            <th class="hidden">번호</th>
+            <th>회사</th>
+            <th>가격</th>
+            <th>변동</th>
+            <th>변동 가격</th>
+            <th class="date-column">날짜</th>
+            <th class="percent-column">변동률</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="top10_up, iterStat : ${list}" class="data-row">
+            <td th:text="${top10_up.id}" class="hidden"></td>
+            <td th:text="${top10_up.company}"></td>
+            <td th:text="${top10_up.price}"></td>
+            <td th:text="${top10_up.change}"></td>
+            <td th:text="${top10_up.change_price}"></td>
+            <td th:text="${top10_up.n_date}" class="date-column"></td>
+            <td th:text="${top10_up.percent}" class="percent-column"></td>
+        </tr>
+        </tbody>
+    </table>
+    <div class="page-btns" id="pageButtons"></div>
+</div>
+
+<footer>
+    <p>&copy; Best Company | Stock Page - Explore the world of stocks</p>
+</footer>
+
+<script>
+    var currentPage = 1;
+    var totalPages = Math.ceil(document.querySelectorAll('.data-row').length / 15);
+
+    function showPage(page) {
+        var rows = document.querySelectorAll('.data-row');
+        var start = (page - 1) * 15;
+        var end = page * 15;
+
+        rows.forEach(function(row, index) {
+            if (index >= start && index < end) {
+                row.style.display = 'table-row';
+            } else {
+                row.style.display = 'none';
+            }
+        });
+
+        currentPage = page;
+        updateActiveButton();
+    }
+
+    function updateActiveButton() {
+        var buttons = document.querySelectorAll('.page-btn');
+        buttons.forEach(function(button, index) {
+            if (index + 1 === currentPage) {
+                button.classList.add('active');
+            } else {
+                button.classList.remove('active');
+            }
+        });
+    }
+
+    function createPageButtons() {
+        var pageButtonsContainer = document.getElementById('pageButtons');
+        for (var i = 1; i <= totalPages; i++) {
+            var button = document.createElement('div');
+            button.classList.add('page-btn');
+            button.textContent = i;
+            button.onclick = function () {
+                showPage(parseInt(this.textContent));
+            };
+            pageButtonsContainer.appendChild(button);
+        }
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+        showPage(1);
+        createPageButtons();
+    });
+</script>
 </body>
 </html>
